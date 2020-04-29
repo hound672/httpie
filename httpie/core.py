@@ -3,6 +3,7 @@ import os
 import platform
 import sys
 from typing import List, Union
+from time import time
 
 import requests
 from pygments import __version__ as pygments_version
@@ -30,6 +31,18 @@ def main(
     Return exit status code.
 
     """
+    start_time = time()
+    res = _main(args, env)
+    end_time = time()
+    elapsed_time = end_time - start_time
+    print('\033[92mElapsed time:\033[0m {0}'.format(elapsed_time))
+
+    return res
+
+def _main(
+        args: List[Union[str, bytes]] = sys.argv,
+        env=Environment(),
+    ) -> ExitStatus:
     program_name, *args = args
     env.program_name = os.path.basename(program_name)
     args = decode_raw_args(args, env.stdin_encoding)
@@ -108,6 +121,7 @@ def main(
             exit_status = ExitStatus.ERROR
 
     return exit_status
+
 
 
 def program(
